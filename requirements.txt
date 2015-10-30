@@ -1,0 +1,4 @@
+pysqlite==2.8.1
+pyzipcode==0.4
+wheel==0.24.0
+xlrd==0.9.4
