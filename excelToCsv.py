@@ -8,49 +8,34 @@ def _get_workbook(source_path_and_name):
 def _get_sheet_names_as_list(workbook):
     return workbook.sheet_names()
 
-def excel_to_csv(source_path_and_name, destination_path = ""):
+def excel_to_csv(source_path_and_name, destination_path_and_name = ""):
     """
     Convert all sheets in excel file to csv
 
     Args:
-        source_path_and_name (string): excel file path and name
-        destination path (string): [optional] directory where
-            converted files should be placed
 
     Returns:
         bool: True if converted successfully, False if there is an error
     """
 
-    print destination_path
     workbook = _get_workbook(source_path_and_name)
     sheet_names = _get_sheet_names_as_list(workbook)
 
-    if destination_path != "":
-        destination_path = destination_path + source_path_and_name[source_path_and_name.rfind('/')+1:source_path_and_name.lower().find('.x')] + '.csv'
-    else:
+    if destination_path_and_name == "":
         destination_path_and_name = source_path_and_name[:source_path_and_name.find('.')] + '.csv'
 
-    print destination_path
+    for sheet in sheet_names:
+        worksheet = workbook.sheet_by_name(sheet)
+        csv_file = open(destination_path_and_name.replace('.csv','') + str(sheet) + '.csv', 'wb')
+        writer = csv.writer(csv_file, quoting = csv.QUOTE_ALL)
 
-    try:
-        for sheet in sheet_names:
-            worksheet = workbook.sheet_by_name(sheet)
-            csv_file = open(destination_path.replace('.csv','') + str(sheet) + '.csv', 'wb')
-            writer = csv.writer(csv_file, quoting = csv.QUOTE_ALL)
+        for row_number in xrange(worksheet.nrows):
+            writer.writerow(
+                    list(x.encode('utf-8') if type(x) == type(u'') else
+                        x for x in worksheet.row_values(row_number))
+                    )
 
-            for row_number in xrange(worksheet.nrows):
-                writer.writerow(
-                        list(x.encode('utf-8') if type(x) == type(u'') else
-                            x for x in worksheet.row_values(row_number))
-                        )
-
-            csv_file.close()
-        
-        return True
-    except Exception as e:
-        print "Failed to convert excel file to csv"
-        print e
-        return False
+        csv_file.close()
 
 def main():
     args = sys.argv
@@ -61,13 +46,13 @@ def main():
             return True
         except Exception as e:
             print "Failed to convert %s" % args[1]
-            print e
     elif len(args) == 2:
         try:
             excel_to_csv(args[1])
             return True
         except Exception as e:
             print "Failed to convert %s" % args[1]
+        excel_to_csv(args[1])
     elif len(args) > 3:
         print "Please provide 1 or 2 arguments only"
     else:
