@@ -1,4 +1,5 @@
 import csv 
+import xlrd
 
 def csv_to_list_of_dictionaries(path_and_file):
     """
@@ -38,5 +39,17 @@ def excel_to_list_of_dictionaries(path_and_file):
     """
 
     list_of_dictionaries = []
+
+    workbook = xlrd.open_workbook(path_and_file)
+    sheet_names = workbook.sheet_names()
+
+    sheet = workbook.sheet_by_name(sheet_names[0])
+   
+    keys = [sheet.cell(0, col_index).value for col_index in xrange(sheet.ncols)]
+    
+    for row_index in xrange(1, sheet.nrows):
+        d = {keys[col_index]: sheet.cell(row_index, col_index).value 
+            for col_index in xrange(sheet.ncols)}
+        list_of_dictionaries.append(d)
 
     return list_of_dictionaries
