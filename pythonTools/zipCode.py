@@ -1,9 +1,6 @@
 import csv
-from pyzipcode import ZipCodeDatabase
+import zipcode
 
-def _get_zip_code_instance(zip_code):
-    zip_code_database = ZipCodeDatabase()
-    return zip_code_database[str(zip_code)]
 
 def get_city_state_by_zip(zip_code):
     """
@@ -18,7 +15,7 @@ def get_city_state_by_zip(zip_code):
         None: If no match is found
     """
 
-    zip_code_instance = _get_zip_code_instance(zip_code)
+    zip_code_instance = zipcode.isequal(str(zip_code))
 
     city = zip_code_instance.city
     state = zip_code_instance.state
@@ -42,7 +39,7 @@ def get_lat_long_by_zip(zip_code):
         None: If no match is found
     """
     
-    zip_code_instance = _get_zip_code_instance(zip_code)
+    zip_code_instance = zipcode.isequal(str(zip_code))
     latitude = zip_code_instance.latitude
     longitude = zip_code_instance.longitude
 
