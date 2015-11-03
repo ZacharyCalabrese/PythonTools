@@ -1,5 +1,5 @@
 import pandas
-from convertToDictionaries import *
+from tools.convertToDictionaries import *
 
 def csv_to_data_frame(path_and_file_name):
     """
